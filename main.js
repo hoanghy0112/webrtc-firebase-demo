@@ -44,38 +44,37 @@ const remoteVideo = document.getElementById("remoteVideo");
 const hangupButton = document.getElementById("hangupButton");
 
 // 1. Setup media sources
+localStream = await navigator.mediaDevices.getUserMedia({
+	video: true,
+	audio: true,
+});
+remoteStream = new MediaStream();
 
-webcamButton.onclick = async () => {
-	localStream = await navigator.mediaDevices.getUserMedia({
-		video: true,
-		audio: true,
+// Push tracks from local stream to peer connection
+localStream.getTracks().forEach((track) => {
+	pc.addTrack(track, localStream);
+});
+
+// Pull tracks from remote stream, add to video stream
+pc.ontrack = (event) => {
+	event.streams[0].getTracks().forEach((track) => {
+		remoteStream.addTrack(track);
 	});
-	remoteStream = new MediaStream();
-
-	// Push tracks from local stream to peer connection
-	localStream.getTracks().forEach((track) => {
-		pc.addTrack(track, localStream);
-	});
-
-	// Pull tracks from remote stream, add to video stream
-	pc.ontrack = (event) => {
-		event.streams[0].getTracks().forEach((track) => {
-			remoteStream.addTrack(track);
-		});
-	};
-
-	webcamVideo.srcObject = localStream;
-	remoteVideo.srcObject = remoteStream;
-
-	callButton.disabled = false;
-	answerButton.disabled = false;
-	webcamButton.disabled = true;
 };
+
+webcamVideo.srcObject = localStream;
+remoteVideo.srcObject = remoteStream;
+
+callButton.disabled = false;
+answerButton.disabled = false;
+webcamButton.disabled = true;
 
 // 2. Create an offer
 callButton.onclick = async () => {
 	// Reference Firestore collections for signaling
-	const callDoc = firestore.collection("calls").doc();
+	const callDoc = firestore
+		.collection("calls")
+		.doc("5hKndBRFe4cXV46mv6nMoy6XWdY2-RvghImlxSVQKbn8QvDIsuRJMaZ13");
 	const offerCandidates = callDoc.collection("offerCandidates");
 	const answerCandidates = callDoc.collection("answerCandidates");
 
@@ -125,7 +124,9 @@ callButton.onclick = async () => {
 // 3. Answer the call with the unique ID
 answerButton.onclick = async () => {
 	const callId = callInput.value;
-	const callDoc = firestore.collection("calls").doc(callId);
+	const callDoc = firestore
+		.collection("calls")
+		.doc("5hKndBRFe4cXV46mv6nMoy6XWdY2-RvghImlxSVQKbn8QvDIsuRJMaZ13");
 	const answerCandidates = callDoc.collection("answerCandidates");
 	const offerCandidates = callDoc.collection("offerCandidates");
 
