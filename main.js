@@ -74,8 +74,6 @@ callButton.onclick = async () => {
 	const offerCandidates = callDoc.collection("offerCandidates");
 	const answerCandidates = callDoc.collection("answerCandidates");
 
-	callInput.value = callDoc.id;
-
 	// Get candidates for caller, save to db
 	pc.onicecandidate = (event) => {
 		console.log({ event });
@@ -113,8 +111,6 @@ callButton.onclick = async () => {
 			}
 		});
 	});
-
-	hangupButton.disabled = false;
 };
 
 // 3. Answer the call with the unique ID
