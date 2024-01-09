@@ -41,29 +41,31 @@ const answerButton = document.getElementById("answerButton");
 const remoteVideo = document.getElementById("remoteVideo");
 
 // 1. Setup media sources
-localStream = await navigator.mediaDevices.getUserMedia({
-	video: true,
-	audio: true,
-});
-remoteStream = new MediaStream();
-
-// Push tracks from local stream to peer connection
-localStream.getTracks().forEach((track) => {
-	pc.addTrack(track, localStream);
-});
-
-// Pull tracks from remote stream, add to video stream
-pc.ontrack = (event) => {
-	event.streams[0].getTracks().forEach((track) => {
-		remoteStream.addTrack(track);
+(async () => {
+	localStream = await navigator.mediaDevices.getUserMedia({
+		video: true,
+		audio: true,
 	});
-};
+	remoteStream = new MediaStream();
 
-webcamVideo.srcObject = localStream;
-remoteVideo.srcObject = remoteStream;
+	// Push tracks from local stream to peer connection
+	localStream.getTracks().forEach((track) => {
+		pc.addTrack(track, localStream);
+	});
 
-callButton.disabled = false;
-answerButton.disabled = false;
+	// Pull tracks from remote stream, add to video stream
+	pc.ontrack = (event) => {
+		event.streams[0].getTracks().forEach((track) => {
+			remoteStream.addTrack(track);
+		});
+	};
+
+	webcamVideo.srcObject = localStream;
+	remoteVideo.srcObject = remoteStream;
+
+	callButton.disabled = false;
+	answerButton.disabled = false;
+})();
 
 // 2. Create an offer
 callButton.onclick = async () => {
