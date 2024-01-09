@@ -35,13 +35,10 @@ let localStream = null;
 let remoteStream = null;
 
 // HTML elements
-const webcamButton = document.getElementById("webcamButton");
 const webcamVideo = document.getElementById("webcamVideo");
 const callButton = document.getElementById("callButton");
-const callInput = document.getElementById("callInput");
 const answerButton = document.getElementById("answerButton");
 const remoteVideo = document.getElementById("remoteVideo");
-const hangupButton = document.getElementById("hangupButton");
 
 // 1. Setup media sources
 localStream = await navigator.mediaDevices.getUserMedia({
@@ -67,7 +64,6 @@ remoteVideo.srcObject = remoteStream;
 
 callButton.disabled = false;
 answerButton.disabled = false;
-webcamButton.disabled = true;
 
 // 2. Create an offer
 callButton.onclick = async () => {
@@ -123,7 +119,6 @@ callButton.onclick = async () => {
 
 // 3. Answer the call with the unique ID
 answerButton.onclick = async () => {
-	const callId = callInput.value;
 	const callDoc = firestore
 		.collection("calls")
 		.doc("5hKndBRFe4cXV46mv6nMoy6XWdY2-RvghImlxSVQKbn8QvDIsuRJMaZ13");
